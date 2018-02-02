@@ -1,0 +1,14 @@
+service: mc-print
+
+provider:
+  name: aws
+  runtime: nodejs6.10
+  environment:
+    MAILCHIMP_API_KEY: ${file(./serverless.env.yml):${opt:stage}.MAILCHIMP_API_KEY}
+
+functions:
+  print:
+    memorySize: 128
+    timeout: 60
+    handler: print.init
+    description: print MC lists and groups

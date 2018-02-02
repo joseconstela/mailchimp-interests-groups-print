@@ -1,0 +1,16 @@
+{
+  "name": "users-mc-filter",
+  "version": "1.0.0",
+  "description": "",
+  "main": "handler.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "async": "2.6.0",
+    "mailchimp-api-v3": "1.8.0",
+    "promise": "8.0.1"
+  }
+}
