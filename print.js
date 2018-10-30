@@ -1,4 +1,4 @@
-'use strict';
+'use strict'
 
 const mcHelper = require('./helpers').mailchimp
 
@@ -14,14 +14,14 @@ const init = (event, context, callback) => {
     .then((lists) => mcHelper.getCategories(lists))
     .then((lists) => mcHelper.getInterests(lists))
     .then((lists) => {
-      console.log( JSON.stringify(lists, " ", 2) );
-      callback(null, 'all good');
+      console.log( JSON.stringify({lists}, " ", 2) )
+      callback(null, 'all good')
     })
     .catch((ex) => {
       console.log({ex})
       callback(ex, null)
     })
 
-};
+}
 
 module.exports.init = init

@@ -3,7 +3,7 @@ const _ = require('lodash')
 const Async = require('async')
 const Mailchimp = require('mailchimp-api-v3')
 
-const mailchimp = new Mailchimp(process.env.MAILCHIMP_API_KEY || '');
+const mailchimp = new Mailchimp(process.env.MAILCHIMP_API_KEY || '')
 
 /**
  * Returns a promise with the list of lists for the authenticated account
@@ -43,10 +43,10 @@ const getCategories = (lists) => {
         .then((response) => {
           // Attach only the categories IDs
           list.categories = _.map(response.categories, 'id')
-          result.push(list);
-          queueCb(null);
+          result.push(list)
+          queueCb(null)
         })
-    }, 5)
+    }, 1)
 
     /**
      * When the queue finishes processing all items, return the promise with 
@@ -57,7 +57,7 @@ const getCategories = (lists) => {
     /**
      * Adds all lists to the queue
      */
-    _.map(lists, (l) => { queue.push(l) })
+    queue.push(lists)
   })
 }
 
@@ -88,11 +88,14 @@ const getInterests = (lists) => {
       let catQueue = Async.queue((cat, catQueueCb) => {
         mailchimp.get(`/lists/${list.id}/interest-categories/${cat}/interests?count=1000`)
           .then((response) => {
-            list.categories = _.map(response.interests, (i) => {
-              return `${i.id} - ${i.name}`
+            list.categories.map((c, index) => {
+              if (c === cat) {
+                list.categories[index] = _.map(response.interests, (i) => {
+                  return `${i.id} - ${i.name}`
+                })
+              }
             })
-            result.push(list)
-            catQueueCb(null);
+            catQueueCb(null)
           })
       }, 2)
 
@@ -100,26 +103,27 @@ const getInterests = (lists) => {
        * When the queue finishes processing all items, return the promise with 
        * the results
        */
-      catQueue.drain = () => { queueCb(); }
+      catQueue.drain = () => {
+        result.push(list)
+        queueCb()
+      }
 
       /**
        * Adds all lists to the queue
        */
-      _.map(list.categories, (c) => {
-        catQueue.push(c)
-      })
+      catQueue.push(list.categories)
     })
     
     /**
      * When the queue finishes processing all items, return the promise with 
      * the results
      */
-    queue.drain = () => { resolve(result); }
+    queue.drain = () => { resolve(result) }
 
     /**
      * Adds all lists to the queue
      */
-    _.map(lists, (l) => { queue.push(l) })
+    queue.push(lists)
   })
 }
 
